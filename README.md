@@ -82,5 +82,8 @@ This is the place for you to write reflections:
 3. Singletons ensure single instance, but it doesn't solve thread safety. In contrast, a DashMap provides a thread-safe implementation of HashMaps. This means Dashmaps are preferred over manually locked singletons for scalable, thread-safety data access.
 
 #### Reflection Publisher-2
+1. Repository handles database operations like fetching, saving, and updating data, while service handles business logic. Only using model means we mix database logic and business logic, making code harder to maintain. Testing is also harder since the logics are tightly coupled. In other words, harder to swap components with different implementation.
+2. Each model would have to handle multiple responsibilities which increases complexity. Tightly coupled interactions complicates maintainance, leading to potential issues when scaling the codebase.
+3. Yes, Postman enhances collaboration by allowing teams to share collections. Its team feature ensures seamless synchronization of workspaces, making testing and API documentation more efficient for all team members.
 
 #### Reflection Publisher-3
