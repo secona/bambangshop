@@ -77,6 +77,9 @@ This is the place for you to write reflections:
 ### Mandatory (Publisher) Reflections
 
 #### Reflection Publisher-1
+1. Classically, the Subscriber is defined as an interface (or trait in Rust). This is preferred so the App can implement multiple different subscribers. However, for BambangShop the single Model would suffice since all subscribers are handled identically. However, this can lead to problems further on because scalability is poor.
+2. DashMaps provides O(1) lookup/insertions/deletions by key (id or url), whihle Vec only has O(n) searches. This means DashMaps are preferred due to its fast operations on large-scale data.
+3. Singletons ensure single instance, but it doesn't solve thread safety. In contrast, a DashMap provides a thread-safe implementation of HashMaps. This means Dashmaps are preferred over manually locked singletons for scalable, thread-safety data access.
 
 #### Reflection Publisher-2
 
