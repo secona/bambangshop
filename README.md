@@ -48,28 +48,28 @@ You can install Postman via this website: https://www.postman.com/downloads/
     (You might want to use `cargo check` if you only need to verify your work without running the app.)
 
 ## Mandatory Checklists (Publisher)
--   [ ] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
+-   [x] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
 -   **STAGE 1: Implement models and repositories**
-    -   [ ] Commit: `Create Subscriber model struct.`
-    -   [ ] Commit: `Create Notification model struct.`
-    -   [ ] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
-    -   [ ] Commit: `Implement add function in Subscriber repository.`
-    -   [ ] Commit: `Implement list_all function in Subscriber repository.`
-    -   [ ] Commit: `Implement delete function in Subscriber repository.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
+    -   [x] Commit: `Create Subscriber model struct.`
+    -   [x] Commit: `Create Notification model struct.`
+    -   [x] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
+    -   [x] Commit: `Implement add function in Subscriber repository.`
+    -   [x] Commit: `Implement list_all function in Subscriber repository.`
+    -   [x] Commit: `Implement delete function in Subscriber repository.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
-    -   [ ] Commit: `Create Notification service struct skeleton.`
-    -   [ ] Commit: `Implement subscribe function in Notification service.`
-    -   [ ] Commit: `Implement subscribe function in Notification controller.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification service.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification controller.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
+    -   [x] Commit: `Create Notification service struct skeleton.`
+    -   [x] Commit: `Implement subscribe function in Notification service.`
+    -   [x] Commit: `Implement subscribe function in Notification controller.`
+    -   [x] Commit: `Implement unsubscribe function in Notification service.`
+    -   [x] Commit: `Implement unsubscribe function in Notification controller.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
-    -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
-    -   [ ] Commit: `Implement notify function in Notification service to notify each Subscriber.`
-    -   [ ] Commit: `Implement publish function in Program service and Program controller.`
-    -   [ ] Commit: `Edit Product service methods to call notify after create/delete.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-3" questions in this README.
+    -   [x] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
+    -   [x] Commit: `Implement notify function in Notification service to notify each Subscriber.`
+    -   [x] Commit: `Implement publish function in Program service and Program controller.`
+    -   [x] Commit: `Edit Product service methods to call notify after create/delete.`
+    -   [x] Write answers of your learning module's "Reflection Publisher-3" questions in this README.
 
 ## Your Reflections
 This is the place for you to write reflections:
@@ -77,13 +77,16 @@ This is the place for you to write reflections:
 ### Mandatory (Publisher) Reflections
 
 #### Reflection Publisher-1
-1. Classically, the Subscriber is defined as an interface (or trait in Rust). This is preferred so the App can implement multiple different subscribers. However, for BambangShop the single Model would suffice since all subscribers are handled identically. However, this can lead to problems further on because scalability is poor.
-2. DashMaps provides O(1) lookup/insertions/deletions by key (id or url), whihle Vec only has O(n) searches. This means DashMaps are preferred due to its fast operations on large-scale data.
-3. Singletons ensure single instance, but it doesn't solve thread safety. In contrast, a DashMap provides a thread-safe implementation of HashMaps. This means Dashmaps are preferred over manually locked singletons for scalable, thread-safety data access.
+1. Classically, the `Subscriber` is defined as an interface (or trait in Rust) to allow multiple types of subscribers with different behaviours. This approach provides flexibility and scalability. However, for BambangShop a single model would suffice since all subscribers are handled identically. However, this may lead to scalability issues in the future when multiple types of subscribers need to be implemented. Those new subscribers may have different behaviours in how they handle notifications and a single model would not suffice.
+2. `DashMap` provides O(1) lookup, insertions, and deletions by key (ID or URL), whereas `Vec` requires O(n) searches. Moreover, using `Vec` does not guarantee unique ID, as two or more elements in a `Vec` can have the same ID due to incorrect implementations. This makes `DashMap` preferable due to its fast operations on large-scale data and its guarantee of unique IDs.
+4. `DashMap` provides a thread-safe implementation of `HashMap`, allowing concurrent access without manual locking. On the other hand, a Singleton ensures a single instance but does not provide thread safety. To achieve thread safety with a Singleton, Rust's built-in synchronization primitives like `Arc` or `Mutex` would be needed, which can introduce additional complexity. Overall, using `DashMap` is not strictly necessary, but it can be beneficial due to its built-in thread safety.
 
 #### Reflection Publisher-2
-1. Repository handles database operations like fetching, saving, and updating data, while service handles business logic. Only using model means we mix database logic and business logic, making code harder to maintain. Testing is also harder since the logics are tightly coupled. In other words, harder to swap components with different implementation.
-2. Each model would have to handle multiple responsibilities which increases complexity. Tightly coupled interactions complicates maintainance, leading to potential issues when scaling the codebase.
-3. Yes, Postman enhances collaboration by allowing teams to share collections. Its team feature ensures seamless synchronization of workspaces, making testing and API documentation more efficient for all team members.
+1. Repositories handle database operations like fetching, saving, and updating data, while services handle business logic. Only using model means we are tightly coupling database logic and business logic, making code harder to maintain. This also complicates testing, as different responsibilities are mixed together. By separating these responsibilities, we can easily swap components with different implementations, improving flexibility and scalability.
+2. Each model would have to handle multiple responsibilities which increases complexity. Tightly coupled interactions complicates maintainance, leading to potential issues when scaling the codebase. For example, the `Subscriber` model directly use `REQWEST_INSTANCE` to send notifications, which limits flexibility and makes testing more difficult. What would happen if we want to replace `reqwest` with other HTTP libraries? We have to change every reference to `REQWEST_INSTANCE` in the codebase which will be a difficult task as the codebase becomes larger. By introducing service and repository layers, we can decouple these dependencies, improve modularity, and make the codebase more scalable.
+3. Yes, I have. Postman is a tool to test APIs by sending requests, inspect responses, and automate testing workflows. One Postman feature that I use on a day-to-day basis is Collections. It allows me to organize API requests and run them in a structured way. The team collaboration feature is also valuable for group projects, allowing seamless sharing of API requests. Overall, Postman improves API testing for both individual and team-based development.
 
 #### Reflection Publisher-3
+1. We use the push model of the observer pattern, where the subject pushes notifications to the observers. This means observers receive notification updates automatically without needing to request data, allowing for real-time updates as soon as changes occur.
+2. If we used the pull model instead, the observer would need to constantly check for updates rather than receiving them automatically. The advantage of the pull model is that it gives observers more control over when they request updated data. However, it also has drawbacks, such as updates not being received in real time. Additionally, frequent polling may lead to increased resource usage and increased server load. Given that notifications need to be sent automatically, the push model is the better choice, as it ensures instant updates without requiring observers to constantly check for new data.
+3. Without multithreading, the program must wait until all subscribers are notifiesd, which can lead to performance issues, especially when notifying subscribers takes a long time. Using multithreading allows notifications to be sent concurrently, without forcing the main program wait, improving efficiency and reducing delays.
